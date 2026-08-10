@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import AllocationToggle from './AllocationToggle.jsx'
 import MacroSlider from './MacroSlider.jsx'
 import GkgEditor from './GkgEditor.jsx'
+import { exportCSV, exportPNG, exportWord, exportPDF } from '../logic/exportUtils.js'
+import { BMR_FORMULAS } from '../data/formulas.js'
+import { ACTIVITY_LEVELS } from '../data/activityLevels.js'
 
 // 第 3 步：看结果 + 高级调整（默认显示配比卡）
 export default function Step3Result({
@@ -11,9 +14,10 @@ export default function Step3Result({
   deficitOverride, onDeficit, surplusOverride, onSurplus,
   cycleTargetDeficit, onCycleTargetDeficit,
   nextWeekWeight, onNextWeekWeight,
-  onBack,
+  input, formulaId, onBack,
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [showExport, setShowExport] = useState(false)
   const isCarbCycle = method.id === 'carb_cycle'
   const isCarbDecrease = method.id === 'carb_decrease'
   const showDeficit = 'deficitKcal' in method.defaults
@@ -261,10 +265,55 @@ export default function Step3Result({
         </div>
       </div>
 
+      {/* 导出区 */}
+      <div className="export-wrap">
+        <button className="btn-export" onClick={() => setShowExport(!showExport)}>
+          {showExport ? '▾' : '▸'} 导出计划
+        </button>
+        {showExport && (
+          <div className="export-options">
+            <button className="export-btn" onClick={() => doExport('csv')}>CSV 表格</button>
+            <button className="export-btn" onClick={() => doExport('png')}>PNG 图片</button>
+            <button className="export-btn" onClick={() => doExport('word')}>Word 文档</button>
+            <button className="export-btn" onClick={() => doExport('pdf')}>PDF（打印另存）</button>
+          </div>
+        )}
+      </div>
+
       <div className="step-nav">
         <button className="btn-secondary" onClick={onBack}>← 上一步</button>
         <span className="recalc-hint">改动后结果自动重算</span>
       </div>
     </div>
   )
+
+  function getExportData() {
+    const formulaName = BMR_FORMULAS.find(f => f.id === formulaId)?.name || ''
+    const activityLabel = ACTIVITY_LEVELS.find(l => l.id === input.activity)?.label || ''
+    const date = new Date().toISOString().slice(0, 10)
+    const weeklyTable = result.weeklyTable
+    const weeklyAvg = weeklyTable ? Math.round(weeklyTable.reduce((s, d) => s + d.kcal, 0) / 7) : null
+    return {
+      sex: input.sex === 'male' ? '男' : '女',
+      age: input.age, height: input.height, weight: input.weight,
+      bodyFat: input.bodyFat,
+      activityLabel,
+      formulaName,
+      bmr, tdee,
+      methodName: method.name,
+      targetKcal: Math.round(result.targetKcal),
+      protein, carb, fat,
+      isCycle: isCarbCycle,
+      weeklyTable, weeklyAvg,
+      date,
+    }
+  }
+
+  function doExport(type) {
+    const data = getExportData()
+    if (type === 'csv') exportCSV(data)
+    else if (type === 'png') exportPNG(data)
+    else if (type === 'word') exportWord(data)
+    else if (type === 'pdf') exportPDF(data)
+  }
 }

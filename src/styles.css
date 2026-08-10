@@ -747,6 +747,84 @@ table.weekly tbody tr:hover { background: var(--paper-2); }
   color: var(--c-carb); font-weight: 500;
 }
 
+/* ===== 食物速查 ===== */
+.food-explorer .food-cats {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px;
+}
+.cat-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: transparent;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 500;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: all 0.2s var(--ease);
+}
+.cat-btn:hover { border-color: var(--ink); color: var(--ink); }
+.cat-btn.active {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+.food-table {
+  width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px;
+}
+.food-table th, .food-table td {
+  border-bottom: 1px solid var(--rule-soft);
+  padding: 8px 4px; text-align: center;
+}
+.food-table th {
+  background: transparent; font-weight: 600;
+  color: var(--muted); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1.5px solid var(--ink);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.food-table tbody tr { transition: background 0.15s; }
+.food-table tbody tr:hover { background: var(--paper-2); }
+.food-table .food-name {
+  text-align: left; font-weight: 500; color: var(--ink);
+}
+.food-table .num {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+}
+.food-table .portion-name { font-size: 11px; color: var(--muted); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+.food-table .portion-kcal {
+  font-weight: 700; color: var(--ink);
+}
+
+/* ===== 导出区 ===== */
+.export-wrap { margin-top: 20px; }
+.btn-export {
+  width: 100%; padding: 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: all 0.2s var(--ease);
+}
+.btn-export:hover { background: var(--ink); color: var(--paper); }
+.export-options {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  margin-top: 8px;
+}
+.export-btn {
+  padding: 10px;
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: all 0.2s var(--ease);
+}
+.export-btn:hover { border-color: var(--ink); background: var(--paper-2); }
+
 /* D: 方法卡片周期标签 */
 .period-tag {
   display: inline-block; font-size: 10px; padding: 1px 6px;

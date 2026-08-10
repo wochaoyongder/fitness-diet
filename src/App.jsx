@@ -5,6 +5,7 @@ import Step2Goal from './components/Step2Goal.jsx'
 import Step3Result from './components/Step3Result.jsx'
 import FormulaSelect from './components/FormulaSelect.jsx'
 import MethodGuide from './components/MethodGuide.jsx'
+import FoodExplorer from './components/FoodExplorer.jsx'
 import { BMR_FORMULAS, DEFAULT_FORMULA_ID } from './data/formulas.js'
 import { DEFAULT_ACTIVITY_ID } from './data/activityLevels.js'
 import { METHODS, DEFAULT_METHOD_ID } from './data/methods.js'
@@ -183,6 +184,9 @@ export default function App() {
         <button className={`tab ${tab === 'calculator' ? 'active' : ''}`} onClick={() => setTab('calculator')}>
           计算器
         </button>
+        <button className={`tab ${tab === 'food' ? 'active' : ''}`} onClick={() => setTab('food')}>
+          食物速查
+        </button>
         <button className={`tab ${tab === 'guide' ? 'active' : ''}`} onClick={() => setTab('guide')}>
           说明
         </button>
@@ -218,6 +222,7 @@ export default function App() {
                 surplusOverride={surplusOverride} onSurplus={setSurplusOverride}
                 cycleTargetDeficit={cycleTargetDeficit} onCycleTargetDeficit={setCycleTargetDeficit}
                 nextWeekWeight={nextWeekWeight} onNextWeekWeight={setNextWeekWeight}
+                input={input} formulaId={formulaId}
                 onBack={back}
               />
             )}
@@ -229,6 +234,8 @@ export default function App() {
             <FormulaSelect formulaId={formulaId} onChange={setFormulaId} />
           </details>
         </div>
+      ) : tab === 'food' ? (
+        <FoodExplorer />
       ) : (
         <MethodGuide formulaId={formulaId} methodId={methodId} activityId={input.activity} />
       )}
