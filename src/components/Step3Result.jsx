@@ -36,7 +36,7 @@ export default function Step3Result({
       {/* 结果主卡 */}
       <div className="result-big">
         <div>
-          <span className="kcal">{Math.round(result.targetKcal)}</span>
+          <span className="kcal" key={`k-${Math.round(result.targetKcal)}`}>{Math.round(result.targetKcal)}</span>
           <span className="kcal-unit">kcal/天</span>
         </div>
         <div className="label">目标每日热量</div>
@@ -48,19 +48,19 @@ export default function Step3Result({
 
       <div className="macro-row">
         <div className="macro-box protein">
-          <div className="g">{protein}g</div>
+          <div className="g" key={`p-${protein}`}>{protein}g</div>
           <div className="name">蛋白质</div>
-          <div className="pct">{pPct}%</div>
+          <div className="pct" key={`pp-${pPct}`}>{pPct}%</div>
         </div>
         <div className="macro-box carb">
-          <div className="g">{carb}g</div>
+          <div className="g" key={`c-${carb}`}>{carb}g</div>
           <div className="name">碳水</div>
-          <div className="pct">{cPct}%</div>
+          <div className="pct" key={`cp-${cPct}`}>{cPct}%</div>
         </div>
         <div className="macro-box fat">
-          <div className="g">{fat}g</div>
+          <div className="g" key={`f-${fat}`}>{fat}g</div>
           <div className="name">脂肪</div>
-          <div className="pct">{fPct}%</div>
+          <div className="pct" key={`fp-${fPct}`}>{fPct}%</div>
         </div>
       </div>
 
@@ -126,41 +126,43 @@ export default function Step3Result({
         </>
       )}
 
-      {/* 高级调整折叠区 */}
-      <div className="advanced-toggle" onClick={() => setShowAdvanced(!showAdvanced)}>
-        <span>{showAdvanced ? '▾' : '▸'} 高级调整（公式 / 赤字盈余 / 碳水下调）</span>
-      </div>
-      {showAdvanced && (
+      {/* 高级调整折叠区（grid-rows 平滑展开） */}
+      <div className={`advanced-wrap ${showAdvanced ? 'open' : ''}`}>
+        <div className="advanced-toggle" onClick={() => setShowAdvanced(!showAdvanced)}>
+          <span>{showAdvanced ? '▾' : '▸'} 高级调整（公式 / 赤字盈余 / 碳水下调）</span>
+        </div>
         <div className="advanced-body">
-          {isCarbDecrease && allocation === 'gkg' && (
-            <div className="field">
-              <label>额外减少碳水（g/天）</label>
-              <input type="number" min="0" value={carbManualDecrease}
-                onChange={(e) => onCarbDecrease(Number(e.target.value) || 0)} />
-              <div className="hint">减脂停滞时自行减少碳水。</div>
+          <div className="advanced-inner">
+            {isCarbDecrease && allocation === 'gkg' && (
+              <div className="field">
+                <label>额外减少碳水（g/天）</label>
+                <input type="number" min="0" value={carbManualDecrease}
+                  onChange={(e) => onCarbDecrease(Number(e.target.value) || 0)} />
+                <div className="hint">减脂停滞时自行减少碳水。</div>
+              </div>
+            )}
+            {showDeficit && !isCarbCycle && (
+              <div className="field">
+                <label>热量赤字（kcal，留空用默认 {method.defaults.deficitKcal}）</label>
+                <input type="number" value={deficitOverride ?? ''}
+                  placeholder={method.defaults.deficitKcal}
+                  onChange={(e) => onDeficit(e.target.value === '' ? null : Number(e.target.value))} />
+              </div>
+            )}
+            {showSurplus && (
+              <div className="field">
+                <label>热量盈余（kcal，留空用默认 {method.defaults.surplusKcal}）</label>
+                <input type="number" value={surplusOverride ?? ''}
+                  placeholder={method.defaults.surplusKcal}
+                  onChange={(e) => onSurplus(e.target.value === '' ? null : Number(e.target.value))} />
+              </div>
+            )}
+            <div className="hint" style={{ marginTop: 8 }}>
+              BMR 公式可在顶部「说明」页查看与切换。
             </div>
-          )}
-          {showDeficit && !isCarbCycle && (
-            <div className="field">
-              <label>热量赤字（kcal，留空用默认 {method.defaults.deficitKcal}）</label>
-              <input type="number" value={deficitOverride ?? ''}
-                placeholder={method.defaults.deficitKcal}
-                onChange={(e) => onDeficit(e.target.value === '' ? null : Number(e.target.value))} />
-            </div>
-          )}
-          {showSurplus && (
-            <div className="field">
-              <label>热量盈余（kcal，留空用默认 {method.defaults.surplusKcal}）</label>
-              <input type="number" value={surplusOverride ?? ''}
-                placeholder={method.defaults.surplusKcal}
-                onChange={(e) => onSurplus(e.target.value === '' ? null : Number(e.target.value))} />
-            </div>
-          )}
-          <div className="hint" style={{ marginTop: 8 }}>
-            BMR 公式可在顶部「说明」页查看与切换。
           </div>
         </div>
-      )}
+      </div>
 
       <div className="step-nav">
         <button className="btn-secondary" onClick={onBack}>← 上一步</button>

@@ -34,9 +34,19 @@
   --shadow: none;
   --shadow-hover: none;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);     /* 丝滑出场曲线 */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 body {
   margin: 0;
@@ -68,6 +78,12 @@ table.weekly td,
   max-width: 680px;
   margin: 0 auto;
   padding: 32px 20px 96px;
+  animation: pageIn 0.5s var(--ease) both;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== 顶部标题：克制成一条 ===== */
@@ -109,6 +125,7 @@ table.weekly td,
   margin-bottom: -1px;
   font-weight: 500;
   letter-spacing: 0.02em;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 .tab.active {
   color: var(--ink);
@@ -169,8 +186,15 @@ table.weekly td,
   background: var(--rule-soft);
   margin: 0 10px;
   min-width: 12px;
+  transition: background 0.4s var(--ease);
 }
 .step-bar.done { background: var(--ink); }
+
+.step-num,
+.step.active .step-num,
+.step.done .step-num {
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
 
 /* ===== 步骤内容：纸面分栏，非漂浮卡 ===== */
 .wizard { width: 100%; }
@@ -182,7 +206,14 @@ table.weekly td,
   padding: 24px 0;
   box-shadow: none;
 }
-.step-content { min-height: 320px; }
+.step-content {
+  min-height: 320px;
+  animation: stepIn 0.4s var(--ease) both;
+}
+@keyframes stepIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 .step-title-main {
   margin: 0 0 4px;
   font-size: 22px;
@@ -214,10 +245,11 @@ table.weekly td,
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.12s;
+  transition: background 0.2s var(--ease), transform 0.1s var(--ease);
   letter-spacing: 0.02em;
 }
 .btn-primary:hover { background: #000; }
+.btn-primary:active { transform: scale(0.97); }
 .btn-secondary {
   background: none;
   color: var(--ink);
@@ -227,8 +259,10 @@ table.weekly td,
   font-size: 14px;
   cursor: pointer;
   font-weight: 500;
+  transition: background 0.2s var(--ease), transform 0.1s var(--ease);
 }
 .btn-secondary:hover { background: var(--paper-2); }
+.btn-secondary:active { transform: scale(0.97); }
 .recalc-hint { font-size: 12px; color: var(--muted); }
 
 /* ===== 表单字段 ===== */
@@ -253,6 +287,18 @@ table.weekly td,
   color: var(--ink);
   font-family: var(--mono);
   transition: border-color 0.12s;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  border-radius: 0;
+  font-size: 16px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  transition: border-color 0.25s var(--ease);
 }
 .field input::placeholder { color: var(--rule-soft); }
 .field input:focus, .field select:focus {
@@ -283,7 +329,7 @@ table.weekly td,
   text-transform: none; letter-spacing: 0;
   font-weight: 500; color: var(--ink);
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-  transition: all 0.12s;
+  transition: all 0.2s var(--ease);
 }
 .radio-group label.checked,
 .radio-group label:has(input:checked) {
@@ -311,7 +357,7 @@ table.weekly td,
   background: var(--paper);
   cursor: pointer;
   text-align: center;
-  transition: background 0.12s;
+  transition: background 0.25s var(--ease);
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 .activity-card:hover { background: var(--paper-2); }
@@ -320,6 +366,7 @@ table.weekly td,
 }
 .activity-card .activity-label {
   font-size: 13px; font-weight: 600; color: var(--ink);
+  transition: color 0.25s var(--ease);
 }
 .activity-card.active .activity-label { color: var(--paper); }
 .activity-card .activity-factor {
@@ -340,7 +387,7 @@ table.weekly td,
   background: transparent;
   cursor: pointer;
   text-align: left;
-  transition: all 0.12s;
+  transition: all 0.25s var(--ease);
 }
 .group-card:hover { border-color: var(--ink); }
 .group-card.active {
@@ -350,6 +397,7 @@ table.weekly td,
 .group-card .group-label {
   font-size: 22px; font-weight: 700; color: var(--ink);
   letter-spacing: -0.01em;
+  transition: color 0.25s var(--ease);
 }
 .group-card.active .group-label { color: var(--paper); }
 .group-card .group-desc {
@@ -365,7 +413,7 @@ table.weekly td,
   background: transparent;
   cursor: pointer;
   text-align: left;
-  transition: background 0.12s;
+  transition: background 0.2s var(--ease);
   position: relative;
 }
 .method-card:hover { background: var(--paper-2); }
@@ -376,6 +424,11 @@ table.weekly td,
   content: "";
   position: absolute; left: 0; top: 0; bottom: 0;
   width: 3px; background: var(--ink);
+  animation: barIn 0.3s var(--ease);
+}
+@keyframes barIn {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
 }
 .method-card .method-name {
   font-size: 15px; font-weight: 600; color: var(--ink);
@@ -414,8 +467,13 @@ table.weekly td,
   color: var(--ink);
   line-height: 1;
   letter-spacing: -0.02em;
-  display: block;
+  display: inline-block;
   margin-top: 8px;
+  animation: numIn 0.45s var(--ease-out) both;
+}
+@keyframes numIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .result-big .kcal-unit {
   font-size: 16px;
@@ -464,6 +522,7 @@ table.weekly td,
 .macro-box:last-child { border-right: none; }
 .macro-box .g {
   font-size: 28px; font-weight: 700; line-height: 1; color: var(--ink);
+  animation: numIn 0.45s var(--ease-out) both;
 }
 .macro-box .name {
   font-size: 11px; color: var(--muted); margin-top: 6px;
@@ -573,19 +632,40 @@ table.weekly tbody tr:hover { background: var(--paper-2); }
 .schedule-row select.mid { color: var(--muted); }
 .schedule-row select.low { border-color: var(--c-fat); color: var(--c-fat); }
 
-/* ===== 高级折叠 ===== */
+/* ===== 高级折叠（grid-template-rows 平滑展开） ===== */
+.advanced-wrap { margin-top: 20px; }
 .advanced-toggle {
-  margin-top: 20px; padding: 12px 14px;
+  padding: 12px 14px;
   background: var(--paper-2); border: 1px solid var(--rule-soft);
   border-radius: var(--radius); font-size: 13px; color: var(--ink);
   cursor: pointer; user-select: none; font-weight: 500;
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease);
+  display: flex; align-items: center; gap: 6px;
 }
 .advanced-toggle:hover { background: var(--paper-2); border-color: var(--ink); }
+.advanced-toggle span { transition: transform 0.3s var(--ease); }
+.advanced-wrap.open .advanced-toggle span { /* 箭头不变，靠字符 */ }
 .advanced-body {
-  padding: 16px; background: var(--paper-2);
-  border: 1px solid var(--rule-soft); border-top: none;
-  border-radius: 0 0 var(--radius) var(--radius); margin-top: -1px;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--ease);
+}
+.advanced-wrap.open .advanced-body {
+  grid-template-rows: 1fr;
+}
+.advanced-inner {
+  overflow: hidden;
+  padding: 0 16px;
+  transition: padding 0.35s var(--ease);
+}
+.advanced-wrap.open .advanced-inner {
+  padding: 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-soft);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  margin-top: -1px;
 }
 
 /* ===== 底部公式折叠 ===== */
@@ -600,7 +680,15 @@ table.weekly tbody tr:hover { background: var(--paper-2); }
   padding: 12px 0; cursor: pointer;
   font-size: 11px; color: var(--muted); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.1em;
+  transition: color 0.2s var(--ease);
+  list-style: none;
 }
+.formula-details summary::-webkit-details-marker { display: none; }
+.formula-details summary::before {
+  content: "▸ "; color: var(--muted); transition: transform 0.25s var(--ease);
+  display: inline-block;
+}
+.formula-details[open] summary::before { transform: rotate(90deg); }
 .formula-details summary:hover { color: var(--ink); }
 .formula-details[open] summary { border-bottom: 1px solid var(--rule-soft); margin-bottom: 12px; }
 .formula-details .card {
