@@ -1,0 +1,20 @@
+{
+  "name": "fitness-diet",
+  "version": "0.1.0",
+  "description": "健身饮食计算器：基于体重等信息计算减脂/增肌期热量与三大营养素分配",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}

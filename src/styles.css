@@ -1,0 +1,491 @@
+/* 健身饮食计算器样式 — 分步向导版 */
+
+:root {
+  --c-bg: #f1f5f4;
+  --c-card: #ffffff;
+  --c-border: #e2e8e0;
+  --c-text: #1a2e2a;
+  --c-muted: #6b7c78;
+  --c-primary: #0d9488;
+  --c-primary-dark: #0f766e;
+  --c-primary-light: #ccfbf1;
+  --c-primary-bg: #f0fdfa;
+  --c-warn: #b45309;
+  --c-warn-light: #fef3c7;
+  --c-warn-bg: #fffbeb;
+  --c-danger: #b91c1c;
+  --c-protein: #0d9488;
+  --c-carb: #f59e0b;
+  --c-fat: #dc2626;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  --shadow-hover: 0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 20px 80px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.app-header h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--c-primary-dark);
+}
+.app-header p { margin: 0; color: var(--c-muted); font-size: 13px; }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 auto 24px;
+  background: #e6ebe9;
+  padding: 4px;
+  border-radius: var(--radius);
+  width: fit-content;
+}
+.tab {
+  padding: 8px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--c-muted);
+  border-radius: 7px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.tab.active {
+  color: #fff;
+  background: var(--c-primary);
+  font-weight: 600;
+}
+
+/* ===== 步骤进度条 ===== */
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 0 4px;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: default;
+  padding: 4px 2px;
+  font-size: 13px;
+  color: var(--c-muted);
+  font-weight: 500;
+}
+.step.clickable { cursor: pointer; }
+.step.clickable:hover { color: var(--c-primary-dark); }
+.step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e6ebe9;
+  color: var(--c-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.step.active .step-num {
+  background: var(--c-primary);
+  color: #fff;
+}
+.step.active .step-title { color: var(--c-primary-dark); font-weight: 600; }
+.step.done .step-num { background: var(--c-primary-light); color: var(--c-primary-dark); }
+.step-bar {
+  flex: 1;
+  height: 2px;
+  background: #e6ebe9;
+  margin: 0 8px;
+  min-width: 12px;
+}
+.step-bar.done { background: var(--c-primary); }
+
+/* ===== 步骤内容卡 ===== */
+.wizard { width: 100%; }
+.step-card { padding: 24px 22px; }
+.step-content { min-height: 320px; }
+.step-title-main {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+.step-sub {
+  margin: 0 0 22px;
+  font-size: 14px;
+  color: var(--c-muted);
+}
+
+/* 步骤内底部导航 */
+.step-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-border);
+}
+.btn-primary {
+  background: var(--c-primary);
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--c-primary-dark); }
+.btn-secondary {
+  background: none;
+  color: var(--c-muted);
+  border: 1px solid var(--c-border);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: #f8fafb; color: var(--c-text); }
+.recalc-hint { font-size: 12px; color: var(--c-muted); }
+
+/* ===== 表单字段 ===== */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--c-muted);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 7px;
+  font-size: 15px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color: var(--c-text);
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+}
+.field .hint { font-size: 12px; color: var(--c-muted); margin-top: 4px; }
+.field.required label::after { content: " *"; color: var(--c-danger); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; gap: 0; } }
+
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-group label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 15px; cursor: pointer;
+  padding: 8px 18px; border: 1px solid var(--c-border);
+  border-radius: 7px; background: #fff;
+  flex: 1; justify-content: center;
+  transition: all 0.15s;
+}
+.radio-group label.checked,
+.radio-group label:has(input:checked) {
+  border-color: var(--c-primary);
+  background: var(--c-primary-bg);
+  color: var(--c-primary-dark);
+  font-weight: 500;
+}
+
+/* ===== 活动量卡片 ===== */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+@media (max-width: 600px) {
+  .activity-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.activity-card {
+  padding: 10px 4px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.activity-card:hover { border-color: var(--c-primary); }
+.activity-card.active {
+  border-color: var(--c-primary);
+  background: var(--c-primary-bg);
+  box-shadow: 0 1px 4px rgba(13,148,136,0.15);
+}
+.activity-card .activity-label { font-size: 13px; font-weight: 600; color: var(--c-text); }
+.activity-card.active .activity-label { color: var(--c-primary-dark); }
+.activity-card .activity-factor { font-size: 11px; color: var(--c-muted); margin-top: 2px; }
+.activity-card .activity-steps { font-size: 10px; color: var(--c-muted); margin-top: 1px; }
+
+/* ===== 第2步：目标选择 ===== */
+.group-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.group-card {
+  padding: 18px;
+  border: 2px solid var(--c-border);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.group-card:hover { border-color: var(--c-primary); }
+.group-card.active {
+  border-color: var(--c-primary);
+  background: var(--c-primary-bg);
+  box-shadow: 0 2px 8px rgba(13,148,136,0.15);
+}
+.group-card .group-label { font-size: 20px; font-weight: 700; color: var(--c-text); }
+.group-card.active .group-label { color: var(--c-primary-dark); }
+.group-card .group-desc { font-size: 12px; color: var(--c-muted); margin-top: 2px; }
+
+.method-cards { display: flex; flex-direction: column; gap: 8px; }
+.method-card {
+  padding: 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.method-card:hover { border-color: var(--c-primary); }
+.method-card.active {
+  border-color: var(--c-primary);
+  background: var(--c-primary-bg);
+  box-shadow: 0 1px 4px rgba(13,148,136,0.12);
+}
+.method-card .method-name {
+  font-size: 15px; font-weight: 600; color: var(--c-text);
+  display: flex; align-items: center; gap: 6px;
+}
+.method-card.active .method-name { color: var(--c-primary-dark); }
+.method-card .method-desc {
+  font-size: 12px; color: var(--c-muted); margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.source-tag {
+  display: inline-block; font-size: 10px; padding: 1px 7px;
+  border-radius: 10px; font-weight: 500; white-space: nowrap;
+}
+.source-tag.verified { background: #d1fae5; color: #065f46; }
+.source-tag.partial { background: #fef3c7; color: #92400e; }
+.source-tag.unverified { background: #fee2e2; color: #991b1b; }
+
+/* ===== 结果展示 ===== */
+.result-big {
+  text-align: center;
+  margin-bottom: 18px;
+  padding: 22px 16px;
+  background: linear-gradient(135deg, var(--c-primary-bg) 0%, #e0f2f1 100%);
+  border-radius: var(--radius);
+}
+.result-big .kcal {
+  font-size: 44px; font-weight: 800;
+  color: var(--c-primary-dark); line-height: 1.1;
+}
+.result-big .kcal-unit { font-size: 16px; font-weight: 500; color: var(--c-primary); margin-left: 4px; }
+.result-big .label { font-size: 13px; color: var(--c-muted); margin-top: 4px; }
+.bmr-tdee {
+  display: flex; justify-content: center; gap: 20px;
+  font-size: 12px; color: var(--c-muted); margin-top: 8px;
+}
+.bmr-tdee strong { color: var(--c-text); }
+
+.macro-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 12px;
+}
+.macro-box {
+  border-radius: 8px; padding: 14px 8px; text-align: center;
+  border: 1px solid;
+}
+.macro-box.protein { background: #f0fdfa; border-color: #ccfbf1; }
+.macro-box.carb { background: #fffbeb; border-color: #fef3c7; }
+.macro-box.fat { background: #fef2f2; border-color: #fecaca; }
+.macro-box .g { font-size: 24px; font-weight: 700; line-height: 1.1; }
+.macro-box.protein .g { color: var(--c-protein); }
+.macro-box.carb .g { color: #d97706; }
+.macro-box.fat .g { color: var(--c-fat); }
+.macro-box .name { font-size: 13px; color: var(--c-text); margin-top: 2px; font-weight: 500; }
+.macro-box .pct { font-size: 11px; color: var(--c-muted); margin-top: 1px; }
+
+.result-note {
+  font-size: 13px; color: var(--c-muted);
+  margin: 8px 0 0; padding: 8px 12px;
+  background: #f8fafb; border-radius: 6px;
+}
+
+table.weekly {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+  margin-top: 8px; border-radius: 8px; overflow: hidden;
+}
+table.weekly th, table.weekly td {
+  border-bottom: 1px solid var(--c-border); padding: 8px 4px; text-align: center;
+}
+table.weekly th {
+  background: var(--c-primary-bg); font-weight: 600;
+  color: var(--c-primary-dark); font-size: 13px;
+}
+table.weekly tbody tr:hover { background: #f8fafb; }
+.level-high { color: var(--c-protein); font-weight: 600; }
+.level-mid { color: #6b7280; }
+.level-low { color: var(--c-fat); font-weight: 600; }
+.weekly-avg { font-size: 12px; color: var(--c-muted); margin-top: 6px; }
+
+.section-title {
+  font-size: 13px; color: var(--c-muted); text-transform: uppercase;
+  letter-spacing: 0.5px; margin: 20px 0 10px; font-weight: 600;
+}
+
+/* ===== 分配方式切换 ===== */
+.alloc-toggle { display: flex; background: #e6ebe9; border-radius: 8px; padding: 3px; }
+.alloc-btn {
+  flex: 1; padding: 8px 12px; border: none; background: none;
+  border-radius: 6px; cursor: pointer; font-size: 14px;
+  color: var(--c-muted); transition: all 0.2s; font-weight: 500;
+}
+.alloc-btn.active {
+  background: #fff; color: var(--c-primary-dark);
+  font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* ===== 滑块 ===== */
+.slider-row { margin-bottom: 16px; }
+.slider-row .top {
+  display: flex; justify-content: space-between;
+  font-size: 14px; margin-bottom: 6px; font-weight: 500;
+}
+.slider-row input[type="range"] {
+  width: 100%; height: 6px; -webkit-appearance: none; appearance: none;
+  background: #e6ebe9; border-radius: 3px; outline: none;
+}
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--c-primary); cursor: pointer;
+  border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.slider-row input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--c-primary); cursor: pointer;
+  border: 2px solid #fff;
+}
+
+/* ===== 碳水循环排班 ===== */
+.schedule-row {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 6px; margin-bottom: 10px;
+}
+.schedule-row select {
+  padding: 8px 2px; font-size: 13px; border: 1px solid var(--c-border);
+  border-radius: 6px; text-align: center; background: #fff;
+}
+.schedule-row select.high { background: #f0fdfa; border-color: #ccfbf1; }
+.schedule-row select.mid { background: #f8fafb; }
+.schedule-row select.low { background: #fef2f2; border-color: #fecaca; }
+
+/* ===== 高级折叠 ===== */
+.advanced-toggle {
+  margin-top: 18px; padding: 10px 14px;
+  background: #f8fafb; border: 1px solid var(--c-border);
+  border-radius: 8px; font-size: 13px; color: var(--c-muted);
+  cursor: pointer; user-select: none;
+}
+.advanced-toggle:hover { background: #f1f5f4; }
+.advanced-body { padding: 14px; background: #f8fafb; border: 1px solid var(--c-border); border-top: none; border-radius: 0 0 8px 8px; margin-top: -1px; }
+
+/* ===== 底部公式折叠 ===== */
+.formula-details {
+  margin-top: 16px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-card);
+  overflow: hidden;
+}
+.formula-details summary {
+  padding: 12px 16px; cursor: pointer;
+  font-size: 13px; color: var(--c-muted); font-weight: 500;
+}
+.formula-details summary:hover { background: #f8fafb; }
+.formula-details[open] summary { border-bottom: 1px solid var(--c-border); }
+/* 让 FormulaSelect 内部 card 去掉外框，融入 details */
+.formula-details .card { border: none; box-shadow: none; margin-bottom: 0; }
+
+/* ===== 卡片通用（说明页等复用） ===== */
+.card {
+  background: var(--c-card); border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  margin: 0 0 14px; font-size: 16px; font-weight: 600;
+  color: var(--c-primary-dark);
+  display: flex; align-items: center; gap: 8px;
+}
+.card h2::before {
+  content: ""; width: 4px; height: 16px;
+  background: var(--c-primary); border-radius: 2px;
+}
+
+/* 说明页 */
+.guide h3 {
+  font-size: 15px; margin: 18px 0 8px;
+  color: var(--c-primary-dark); font-weight: 600;
+}
+.guide h3:first-child { margin-top: 0; }
+.guide p, .guide li { font-size: 14px; }
+.guide ul { padding-left: 20px; }
+.guide li { margin-bottom: 3px; }
+.guide .ref { font-size: 12px; color: var(--c-muted); word-break: break-all; margin: 2px 0; }
+.guide .ref a { color: var(--c-primary); }
+
+.warn {
+  background: var(--c-warn-light); border-left: 3px solid var(--c-warn);
+  padding: 10px 14px; font-size: 13px; border-radius: 6px;
+  margin: 8px 0; color: #78350f;
+}
+
+.disclaimer {
+  background: var(--c-warn-bg); border: 1px solid #fde68a;
+  padding: 12px 16px; border-radius: 8px; font-size: 13px;
+  color: #92400e; margin-top: 18px;
+}
