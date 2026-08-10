@@ -16,3 +16,7 @@ Thumbs.db
 
 # Claude
 .claude/
+
+# 第三方 skill 安装（不属本项目代码）
+.agents/
+skills-lock.json
