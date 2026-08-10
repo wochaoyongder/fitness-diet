@@ -2,7 +2,7 @@ import React from 'react'
 import { METHODS, GROUP_LABELS } from '../data/methods.js'
 import { BMR_FORMULAS, RELIABILITY_LABELS as BMR_REL } from '../data/formulas.js'
 import { ACTIVITY_LEVELS, ACTIVITY_NOTE } from '../data/activityLevels.js'
-import { INSTITUTION_SOURCES, BLOGGER_SOURCES } from '../data/references.js'
+import { INSTITUTION_SOURCES, BLOGGER_SOURCES, COMBINED_TEMPLATE } from '../data/references.js'
 
 // 内嵌教学说明
 // props: formulaId, methodId, activityId
@@ -92,22 +92,48 @@ export default function MethodGuide({ formulaId, methodId, activityId }) {
         </div>
       ))}
 
-      <h3>数据来源（博主，待核验）</h3>
-      <div className="warn">
-        以下博主的可量化配比主张尚未在线核验，仅作参考。如有原文链接欢迎补充。
-      </div>
+      <h3>数据来源（博主）</h3>
+      <p style={{ fontSize: 13, color: '#7b8794', marginBottom: 8 }}>
+        博主内容基于公开平台提炼整理，非逐字转载；"已实现/已提炼"者已在计算逻辑中落地，"占位"者待补充。
+      </p>
       {BLOGGER_SOURCES.map((s, i) => (
-        <div key={i} style={{ marginBottom: 6 }}>
+        <div key={i} style={{ marginBottom: 12 }}>
           <p>
             <strong>{s.name}</strong>
+            <span className={`source-tag ${s.reliability}`} style={{ marginLeft: 6 }}>
+              {s.reliability === 'verified' ? '已核验' : s.reliability === 'partial' ? '部分核验' : '未核验'}
+            </span>
             <span style={{ fontSize: 12, color: '#7b8794', marginLeft: 6 }}>[{s.status}]</span>
           </p>
           <p style={{ fontSize: 13 }}>{s.desc}</p>
+          {s.urls.length > 0 && (
+            <p className="ref" style={{ marginTop: 2 }}>
+              来源：{s.urls.map((u, j) => <span key={j}>{j > 0 && '；'}{u}</span>)}
+            </p>
+          )}
+          <p className="ref">{s.citation}</p>
         </div>
       ))}
 
+      <h3>综合执行模板</h3>
+      <p style={{ fontSize: 13, color: '#7b8794', marginBottom: 8 }}>
+        凯圣王×陈石共同逻辑 + 通行运动营养原则的二次整理，<strong>非任何一位老师的官方课表</strong>。
+      </p>
+      <p><strong>增肌（建议 8-12 周周期）</strong></p>
+      <p style={{ fontSize: 13 }}>{COMBINED_TEMPLATE.bulk.note}</p>
+      <ul>
+        <li>频率：{COMBINED_TEMPLATE.bulk.frequency}</li>
+        <li>有效组：{COMBINED_TEMPLATE.bulk.effectiveSets}</li>
+        <li>强度：{COMBINED_TEMPLATE.bulk.intensity}</li>
+      </ul>
+      <p><strong>减脂（建议 6-12 周后评估）</strong></p>
+      <p style={{ fontSize: 13 }}>{COMBINED_TEMPLATE.cut.note}</p>
+      <p style={{ fontSize: 13 }}>温和缺口：{COMBINED_TEMPLATE.cut.deficit}；{COMBINED_TEMPLATE.cut.protein}</p>
+      <p><strong>平台期排查</strong></p>
+      <p style={{ fontSize: 13 }}>{COMBINED_TEMPLATE.plateau}</p>
+
       <div className="disclaimer">
-        ⚠️ 免责声明：本工具仅供参考与学习，不构成医疗或专业营养建议。具体饮食方案请咨询医生或注册营养师，尤其是孕妇、哺乳期、慢性病、服药人群。
+        ⚠️ 免责声明：{COMBINED_TEMPLATE.disclaimer} 本工具仅供参考与学习，不构成医疗或专业营养建议。
       </div>
     </div>
   )

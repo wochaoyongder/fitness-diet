@@ -42,6 +42,7 @@ export default function Step2Goal({ group, onGroup, methodId, onMethod, onBack, 
             >
               <div className="method-name">
                 {m.name}
+                <span className="period-tag">{m.period === 'week' ? '周循环' : '每日'}</span>
                 <span className={`source-tag ${m.reliability}`}>{RELIABILITY[m.reliability]}</span>
               </div>
               <div className="method-desc">{m.note}</div>

@@ -26,7 +26,9 @@ export const METHODS = [
       fatSplit: { high: 0.15, mid: 0.35, low: 0.5 },
       highDays: 2, midDays: 3, lowDays: 2,
       defaultSchedule: ['high', 'mid', 'mid', 'high', 'mid', 'low', 'low'],
-      deficitKcal: 0,
+      // 赤字控制：用户填 targetDeficit 后，按 TDEE − targetDeficit 反推周碳水总量
+      // 不填则用凯圣王原公式（体重×2×7），但会警告赤字过大
+      targetDeficit: null, // null=用原公式；填了=按目标赤字反推
     },
   },
   {
@@ -35,10 +37,10 @@ export const METHODS = [
     group: 'cut',
     period: 'day',
     defaultAllocation: 'gkg',
-    source: '橙子减脂（用户描述）',
-    reliability: 'unverified',
-    citation: '基于用户描述实现。橙子减脂原始触发条件未核验，待用户喂料。',
-    note: '蛋白与脂肪按 g/kg 固定，碳水 = 剩余热量。每周用户重新输入当前体重，随体重下降 TDEE 降低，蛋白/脂肪 g/kg 不变 → 碳水自然下降。减脂停滞时用户可手动下调碳水。赤字默认 −500 kcal。',
+    source: '橙子减脂（用户描述）+ 陈石平台期逻辑',
+    reliability: 'partial',
+    citation: '橙子减脂（用户描述，蛋白/脂肪 g/kg 固定，碳水随体重降自然降）+ 陈石平台期排查：先看 ≥2 周体重均值，确认真停滞再调一个变量，每天减 100-200 kcal。',
+    note: '蛋白与脂肪按 g/kg 固定，碳水 = 剩余热量。每周重输体重，随体重下降 TDEE 降低、碳水自然下降。减脂停滞时手动下调碳水（陈石建议每天 100-200 kcal 幅度，先确认真停滞）。赤字默认 −500 kcal。',
     defaults: {
       proteinGPerKg: 1.8,
       fatGPerKg: 1.0,
@@ -53,10 +55,10 @@ export const METHODS = [
     group: 'cut',
     period: 'day',
     defaultAllocation: 'ratio',
-    source: '通用方法',
+    source: '通用方法（陈石温和缺口逻辑）',
     reliability: 'verified',
-    citation: '通用减脂方法，控总热量为主。',
-    note: '只控总热量：TDEE − 赤字（默认 500）。三大营养素由联动滑块自由配比，默认蛋白 25% / 碳水 45% / 脂肪 30%。',
+    citation: '通用减脂方法，控总热量为主；陈石主张温和缺口 10-20%，不要一开始就极端节食。',
+    note: '只控总热量：TDEE − 赤字（默认 500，约 TDEE 的 15-18%）。三大营养素由联动滑块自由配比，默认蛋白 25% / 碳水 45% / 脂肪 30%。陈石：减脂先区分减重/减脂，蛋白质优先保肌，低碳不更减脂。',
     defaults: {
       deficitKcal: -500,
       macroPct: { protein: 25, carb: 45, fat: 30 },
@@ -88,10 +90,10 @@ export const METHODS = [
     group: 'bulk',
     period: 'day',
     defaultAllocation: 'gkg',
-    source: 'ISSN / ACSM',
-    reliability: 'unverified',
-    citation: 'ISSN 立场声明 (Jager 2017)；ACSM/AND/DC 联合立场 (2016)。DOI 见 references。',
-    note: '小幅盈余 +300 kcal，蛋白 1.6-2.0 g/kg（默认 1.8），脂肪 1.0 g/kg，碳水补足。长肌为主、少长脂肪。',
+    source: 'ISSN / ACSM / 凯圣王×陈石综合',
+    reliability: 'partial',
+    citation: 'ISSN 立场 (Jager 2017)；ACSM/AND/DC (2016)；凯圣王×陈石综合模板：蛋白 1.6-2.2 g/kg 分 3-5 餐，小幅盈余 5-10%，碳水服务训练。',
+    note: '小幅盈余 +300 kcal（约维持热量上方 5-10%），蛋白 1.6-2.2 g/kg（默认 1.8）分 3-5 餐，脂肪 1.0 g/kg，碳水补足并支持训练。高训练日前后多碳水，休息日少。每周看 3-7 天晨重均值，连续 2-3 周不涨且力量不进步，每天加 100-200 kcal 再观察。练后立即补蛋白并非决定性（陈石）。',
     defaults: {
       proteinGPerKg: 1.8,
       fatGPerKg: 1.0,

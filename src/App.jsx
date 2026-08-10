@@ -79,6 +79,10 @@ export default function App() {
   const [carbManualDecrease, setCarbManualDecrease] = useState(0)
   const [deficitOverride, setDeficitOverride] = useState(null)
   const [surplusOverride, setSurplusOverride] = useState(null)
+  // A: 碳水循环目标赤字（null=用凯圣王原公式，填了=按赤字反推周碳水）
+  const [cycleTargetDeficit, setCycleTargetDeficit] = useState(null)
+  // B: 碳水渐降下周体重（null=不显示下周，填了=算下周碳水）
+  const [nextWeekWeight, setNextWeekWeight] = useState(null)
 
   const formula = BMR_FORMULAS.find((f) => f.id === formulaId)
   const needsBodyFat = formula?.needsBodyFat
@@ -119,11 +123,24 @@ export default function App() {
         proteinGPerKg: method.defaults.proteinGPerKg,
         weeklyCarbGPerKg: method.defaults.weeklyCarbGPerKg,
         weeklyFatGPerKg: method.defaults.weeklyFatGPerKg,
+        targetDeficit: cycleTargetDeficit,
       })
+    } else if (isCarbDecrease) {
+      methodInput.proteinGPerKg = gkgValues.proteinGPerKg
+      methodInput.fatGPerKg = gkgValues.fatGPerKg
+      methodInput.carbManualDecrease = carbManualDecrease
+      methodInput.deficitKcal = deficitOverride !== null ? deficitOverride : method.defaults.deficitKcal
+      // B: 下周递减 —— 用新体重重算 BMR/TDEE
+      methodInput.nextWeekWeight = nextWeekWeight
+      if (nextWeekWeight != null && nextWeekWeight > 0) {
+        methodInput.nextTdee = calcTDEE(
+          calcBMR(formulaId, { ...calcInput, weight: Number(nextWeekWeight) }),
+          input.activity
+        )
+      }
     } else if (allocation === 'gkg') {
       methodInput.proteinGPerKg = gkgValues.proteinGPerKg
       methodInput.fatGPerKg = gkgValues.fatGPerKg
-      if (isCarbDecrease) methodInput.carbManualDecrease = carbManualDecrease
       if ('deficitKcal' in method.defaults) {
         methodInput.deficitKcal = deficitOverride !== null ? deficitOverride : method.defaults.deficitKcal
       } else if ('surplusKcal' in method.defaults) {
@@ -140,7 +157,7 @@ export default function App() {
 
     try { return calcMethod(methodId, methodInput, tdee) }
     catch (e) { console.error(e); return null }
-  }, [methodId, method, tdee, calcInput, allocation, gkgValues, macroPct, schedule, carbManualDecrease, deficitOverride, surplusOverride, isCarbCycle, isCarbDecrease])
+  }, [methodId, method, tdee, calcInput, allocation, gkgValues, macroPct, schedule, carbManualDecrease, deficitOverride, surplusOverride, cycleTargetDeficit, nextWeekWeight, isCarbCycle, isCarbDecrease])
 
   const goStep = (n) => { setStep(n); if (n > maxStep) setMaxStep(n) }
   const next = () => goStep(Math.min(3, step + 1))
@@ -199,6 +216,8 @@ export default function App() {
                 carbManualDecrease={carbManualDecrease} onCarbDecrease={setCarbManualDecrease}
                 deficitOverride={deficitOverride} onDeficit={setDeficitOverride}
                 surplusOverride={surplusOverride} onSurplus={setSurplusOverride}
+                cycleTargetDeficit={cycleTargetDeficit} onCycleTargetDeficit={setCycleTargetDeficit}
+                nextWeekWeight={nextWeekWeight} onNextWeekWeight={setNextWeekWeight}
                 onBack={back}
               />
             )}

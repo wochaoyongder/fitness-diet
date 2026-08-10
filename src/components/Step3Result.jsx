@@ -4,15 +4,14 @@ import MacroSlider from './MacroSlider.jsx'
 import GkgEditor from './GkgEditor.jsx'
 
 // 第 3 步：看结果 + 高级调整（默认显示配比卡）
-// props: result, tdee, bmr, method, allocation, onAllocation,
-//        macroPct, onMacroPct, gkgValues, onGkg, weight,
-//        schedule, onSchedule, carbManualDecrease, onCarbDecrease,
-//        deficitOverride, onDeficit, surplusOverride, onSurplus, onBack
 export default function Step3Result({
   result, tdee, bmr, method, allocation, onAllocation,
   macroPct, onMacroPct, gkgValues, onGkg, weight,
   schedule, onSchedule, carbManualDecrease, onCarbDecrease,
-  deficitOverride, onDeficit, surplusOverride, onSurplus, onBack,
+  deficitOverride, onDeficit, surplusOverride, onSurplus,
+  cycleTargetDeficit, onCycleTargetDeficit,
+  nextWeekWeight, onNextWeekWeight,
+  onBack,
 }) {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const isCarbCycle = method.id === 'carb_cycle'
@@ -28,6 +27,28 @@ export default function Step3Result({
   const cPct = totalFromMacro > 0 ? Math.round((carb * 4 / totalFromMacro) * 1000) / 10 : 0
   const fPct = totalFromMacro > 0 ? Math.round((fat * 9 / totalFromMacro) * 1000) / 10 : 0
 
+  // C: 连续低碳检测（≥2 个连续低碳日）
+  let consecutiveLow = 0
+  for (const lvl of schedule) {
+    if (lvl === 'low') consecutiveLow++
+    else consecutiveLow = 0
+  }
+  // 检查是否有 2+ 连续（含循环首尾相接）
+  const lowRun = (() => {
+    let maxRun = 0, cur = 0
+    for (const lvl of schedule) {
+      if (lvl === 'low') { cur++; maxRun = Math.max(maxRun, cur) }
+      else cur = 0
+    }
+    // 首尾相接
+    if (schedule[0] === 'low' && schedule[schedule.length - 1] === 'low') {
+      let head = 0; for (const l of schedule) { if (l === 'low') head++; else break }
+      let tail = 0; for (let i = schedule.length - 1; i >= 0; i--) { if (schedule[i] === 'low') tail++; else break }
+      maxRun = Math.max(maxRun, head + tail)
+    }
+    return maxRun
+  })()
+
   return (
     <div className="step-content">
       <h2 className="step-title-main">你的饮食计划</h2>
@@ -39,12 +60,19 @@ export default function Step3Result({
           <span className="kcal" key={`k-${Math.round(result.targetKcal)}`}>{Math.round(result.targetKcal)}</span>
           <span className="kcal-unit">kcal/天</span>
         </div>
-        <div className="label">目标每日热量</div>
+        <div className="label">
+          {isCarbCycle ? '周均每日热量' : '目标每日热量'}
+        </div>
         <div className="bmr-tdee">
           <span>BMR <strong>{bmr}</strong></span>
           <span>TDEE <strong>{tdee}</strong></span>
         </div>
       </div>
+
+      {/* A: 碳水循环赤字过大警告 */}
+      {isCarbCycle && result.warning && (
+        <div className="warn warn-strong">{result.warning}</div>
+      )}
 
       <div className="macro-row">
         <div className="macro-box protein">
@@ -65,6 +93,33 @@ export default function Step3Result({
       </div>
 
       {result.note && <p className="result-note">{result.note}</p>}
+
+      {/* B: 碳水渐降下周递减展示 */}
+      {isCarbDecrease && result.nextWeek && (
+        <div className="next-week-card">
+          <div className="next-week-title">下周预测（体重 {result.nextWeek.weight}kg）</div>
+          <div className="next-week-row">
+            <div className="next-week-cell">
+              <div className="next-week-label">TDEE</div>
+              <div className="next-week-val">{result.nextWeek.tdee}</div>
+            </div>
+            <div className="next-week-cell">
+              <div className="next-week-label">目标</div>
+              <div className="next-week-val">{result.nextWeek.targetKcal}</div>
+            </div>
+            <div className="next-week-cell">
+              <div className="next-week-label">碳水</div>
+              <div className="next-week-val">{result.nextWeek.macros.carb}g</div>
+            </div>
+            <div className="next-week-cell">
+              <div className="next-week-label">较本周</div>
+              <div className={`next-week-val ${result.nextWeek.carbDecrease > 0 ? 'down' : result.nextWeek.carbDecrease < 0 ? 'up' : ''}`}>
+                {result.nextWeek.carbDecrease > 0 ? `−${result.nextWeek.carbDecrease}g` : result.nextWeek.carbDecrease < 0 ? `+${-result.nextWeek.carbDecrease}g` : '持平'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {result.weeklyTable && (
         <>
@@ -114,7 +169,35 @@ export default function Step3Result({
             {schedule.filter((s) => s === 'mid').length} 中碳 /{' '}
             {schedule.filter((s) => s === 'low').length} 低碳
           </div>
+          {/* C: 连续低碳提醒 */}
+          {lowRun >= 2 && (
+            <div className="warn warn-soft">
+              ⚠ 你排出了 {lowRun} 天连续低碳，易饿 + 代谢补偿（凯圣王）。建议至少插入一天中/高碳。
+            </div>
+          )}
         </div>
+      ) : isCarbDecrease ? (
+        <>
+          <GkgEditor weight={weight} values={gkgValues} onChange={onGkg} />
+          {/* B: 下周体重输入 */}
+          <div className="card">
+            <h2>下周体重预测</h2>
+            <div className="hint" style={{ marginBottom: 10 }}>
+              填入预计下周的体重，自动按新体重重算 TDEE，碳水自然下降——这正是「渐降」。
+            </div>
+            <div className="field">
+              <label>下周体重（kg）</label>
+              <input
+                type="number"
+                min="0"
+                step="0.1"
+                value={nextWeekWeight ?? ''}
+                placeholder={weight}
+                onChange={(e) => onNextWeekWeight(e.target.value === '' ? null : Number(e.target.value))}
+              />
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <AllocationToggle allocation={allocation} onChange={onAllocation} />
@@ -133,7 +216,21 @@ export default function Step3Result({
         </div>
         <div className="advanced-body">
           <div className="advanced-inner">
-            {isCarbDecrease && allocation === 'gkg' && (
+            {/* A: 碳水循环目标赤字 */}
+            {isCarbCycle && (
+              <div className="field">
+                <label>目标赤字（kcal/天，留空用凯圣王原公式）</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={cycleTargetDeficit ?? ''}
+                  placeholder="如 300（按 TDEE−300 反推周碳水）"
+                  onChange={(e) => onCycleTargetDeficit(e.target.value === '' ? null : Number(e.target.value))}
+                />
+                <div className="hint">填了按目标周均热量反推周碳水总量，赤字可控；不填用凯圣王原公式（体重×2×7）。</div>
+              </div>
+            )}
+            {isCarbDecrease && (
               <div className="field">
                 <label>额外减少碳水（g/天）</label>
                 <input type="number" min="0" value={carbManualDecrease}

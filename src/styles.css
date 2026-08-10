@@ -737,6 +737,54 @@ table.weekly tbody tr:hover { background: var(--paper-2); }
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
+/* 警告分级：strong 赤字过大（陶土红）/ soft 连续低碳（琥珀） */
+.warn-strong {
+  background: #FEF2F2; border-left-color: var(--c-fat);
+  color: var(--c-fat); font-weight: 500;
+}
+.warn-soft {
+  background: #FFFBEB; border-left-color: var(--c-carb);
+  color: var(--c-carb); font-weight: 500;
+}
+
+/* D: 方法卡片周期标签 */
+.period-tag {
+  display: inline-block; font-size: 10px; padding: 1px 6px;
+  border-radius: 2px; font-weight: 600; white-space: nowrap;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--rule-soft);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* B: 碳水渐降下周预测卡 */
+.next-week-card {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1.5px dashed var(--ink);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+}
+.next-week-title {
+  font-size: 11px; color: var(--muted); margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.next-week-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.next-week-cell { text-align: center; }
+.next-week-label {
+  font-size: 10px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 0.05em; font-weight: 600;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.next-week-val {
+  font-family: var(--mono); font-size: 18px; font-weight: 700;
+  color: var(--ink); margin-top: 3px;
+}
+.next-week-val.down { color: var(--c-carb); }
+.next-week-val.up { color: var(--c-fat); }
+
 .disclaimer {
   background: var(--paper-2); border: 1px solid var(--rule-soft);
   border-left: 3px solid var(--c-fat);
