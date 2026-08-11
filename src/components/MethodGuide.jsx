@@ -93,9 +93,6 @@ export default function MethodGuide({ formulaId, methodId, activityId }) {
       ))}
 
       <h3>数据来源（博主）</h3>
-      <p style={{ fontSize: 13, color: '#7b8794', marginBottom: 8 }}>
-        博主内容基于公开平台提炼整理，非逐字转载；"已实现/已提炼"者已在计算逻辑中落地，"占位"者待补充。
-      </p>
       {BLOGGER_SOURCES.map((s, i) => (
         <div key={i} style={{ marginBottom: 12 }}>
           <p>
