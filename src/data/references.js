@@ -70,30 +70,6 @@ export const BLOGGER_SOURCES = [
     citation: '陈石｜抖音精选系列 2026；YYDS运动营养成长中心小宇宙播客；广东白云学院讲座背景介绍 2026-05-29。资质：ACE讲师、NSCA-CSCS、超鹿运动技术合伙人。',
     status: '已提炼（循证机制，含可执行数字）',
   },
-  {
-    name: '陈柏龄',
-    desc: '待补充可量化配比主张。',
-    urls: [],
-    reliability: 'unverified',
-    citation: '待补充原文链接。',
-    status: '占位待补',
-  },
-  {
-    name: '卓叔增重',
-    desc: '面向瘦人增肌，待补充可量化配比主张。',
-    urls: [],
-    reliability: 'unverified',
-    citation: '待补充原文链接。',
-    status: '占位待补',
-  },
-  {
-    name: '仰望尾迹云',
-    desc: '待补充可量化配比主张。',
-    urls: [],
-    reliability: 'unverified',
-    citation: '待补充原文链接。',
-    status: '占位待补',
-  },
 ]
 
 // 综合执行模板（凯圣王×陈石共同逻辑 + 通行运动营养原则的二次整理）
