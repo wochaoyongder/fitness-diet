@@ -14,6 +14,14 @@
 
 ## 使用
 
+### 在线使用（推荐，免安装）
+
+访问 **https://wochaoyongder.github.io/fitness-diet/** 即可在浏览器中直接使用，手机电脑都行，无需安装任何东西。
+
+> 首次部署：仓库 Settings → Pages → Source 选 "GitHub Actions"（push 后 GitHub Actions 自动构建发布）。
+
+### 本地运行（开发者）
+
 ```bash
 cd fitness-diet
 npm install
@@ -21,6 +29,13 @@ npm run dev
 ```
 
 浏览器打开终端提示的本地地址（默认 http://localhost:5173）。
+
+### 构建
+
+```bash
+npm run build       # 为 GitHub Pages 构建（base 含子路径）
+npm run build:local # 本地构建（base 为 /）
+```
 
 ## 公式与数据来源
 
