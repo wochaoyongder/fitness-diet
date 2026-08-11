@@ -26,14 +26,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install deps
-        run: npm install
+        run: npm install --no-audit --no-fund
 
       - name: Build
-        run: node_modules/.bin/vite build
+        run: node node_modules/vite/bin/vite.js build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
